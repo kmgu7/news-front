@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>YOUTH NEWS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ───────────────────────────────────────────────────────────── */
+        /* 기본 설정 */
+        body {
+            font-family: 'Malgun Gothic','Apple SD Gothic Neo','Nanum Gothic',sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #333;
+            background-color: #f8f8f8;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* ───────────────────────────────────────────────────────────── */
+        /* 헤더: 로고 중앙, 검색창 우측 */
+        header.site-header {
+            position: relative;
+            display: flex;
+            justify-content: center;    /* 로고를 중앙으로 */
+            align-items: center;
+            background-color: #ffffff;
+            padding: 20px 15px 20px;    /* 상-하 20, 좌-우 15 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #eee;
+        }
+        .site-logo {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 3em;
+            color: #222;
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+        .site-logo span {
+            color: #ff5722;
+        }
+        .header-search {
+            position: absolute;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-search input[type="text"],
+        .header-search select {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+        }
+        .header-search input[type="text"]:focus,
+        .header-search select:focus {
+            outline: none;
+            border-color: #ff9800;
+        }
+        .header-search button {
+            padding: 6px 14px;
+            background-color: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .header-search button:hover {
+            background-color: #e68900;
+        }
+
+        /* ───────────────────────────────────────────────────────────── */
+        /* 네비게이션 */
+        nav {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav a {
+            color: white;
+            padding: 10px 18px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            white-space: nowrap;
+            transition: background-color 0.3s ease;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        nav a.active {
+            background-color: #ff9800;
+        }
+
+        /* ───────────────────────────────────────────────────────────── */
+        /* 컨테이너 */
+        .container {
+            padding: 25px;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        /* ───────────────────────────────────────────────────────────── */
+        h2 {
+            margin-top: 15px;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 2em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        ul { list-style: none; padding-left: 0; }
+        li { margin-bottom: 15px; }
+        small { color: #555; }
+
+        /* 연관성/자극성 동그라미 공통 스타일 */
+        .relevance-dot,
+        .stimulus-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            border: 2px solid rgba(255,255,255,0.7);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .relevance-dot {
+            margin-right: 8px;
+            background-color: hsl(var(--relevance-hue,0),90%,45%);
+        }
+        .stimulus-dot {
+            margin-right: 12px;
+            background-color: hsl(var(--stimulus-hue,0),90%,45%);
+        }
+
+        .article-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .article-title-link {
+            flex-grow: 1;
+            text-decoration: none;
+            color: #222;
+            font-weight: bold;
+            font-size: 1.3em;
+            transition: color 0.2s ease;
+        }
+        .article-title-link:hover { color: #ff9800; }
+
+        .article-summary {
+            font-size: 1em;
+            color: #555;
+            margin-top: 5px;
+            padding-left: calc(32px + 8px + 32px + 12px);
+            display: block;
+        }
+        hr.article-divider {
+            border: none;
+            border-top: 1px dashed #ddd;
+            margin: 20px 0;
+        }
+
+        /* 오늘의 뉴스 요약 */
+        .summary-list-item {
+            background-color: #fefefe;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .summary-list-item h3 {
+            font-size: 1.6em;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .summary-list-item pre {
+            white-space: pre-wrap;
+            font-size: 1.15em;
+            line-height: 1.8;
+            letter-spacing: 0.02em;
+            background-color: transparent;
+            padding: 0; border: none; color: #333;
+        }
+
+        /* 기사 상세 페이지 */
+        .article-detail-title {
+            font-size: 2.5em;
+            color: #222;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        .article-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            font-size: 0.95em;
+            color: #777;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .article-detail-meta span {
+            display: flex;
+            align-items: center;
+        }
+        .article-detail-meta span:not(:last-child)::after {
+            content: '|';
+            margin-left: 20px;
+            color: #ccc;
+        }
+        .article-detail-summary-block {
+            font-size: 1.15em;
+            line-height: 1.7;
+            color: #444;
+            background-color: #fefefe;
+            border: 1px solid #ddd;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 25px;
+        }
+        .article-detail-summary-block strong {
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 1.1em;
+        }
+        .article-detail-content {
+            margin-top: 30px;
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        /* 상세 페이지 점수 배지 (제목 옆) */
+        .detail-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 16px;
+        }
+        .article-detail-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        /* 하단 배지 */
+        .detail-badges--bottom {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        hr.section-divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 30px 0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 30px;
+            font-size: 1em;
+        }
+        .pagination a,
+        .pagination span {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #333;
+            font-weight: bold;
+            border: 1px solid transparent;
+        }
+        .pagination a:hover {
+            background-color: #ff9800;
+            color: white;
+        }
+        .pagination .current-page {
+            color: red;
+            text-decoration: underline;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            cursor: default;
+        }
+
+        /* 반응형 */
+        @media screen and (max-width: 768px) {
+            body { font-size: 15px; }
+            header.site-header {
+                flex-wrap: wrap;
+                padding: 15px 10px;
+            }
+            .site-logo { font-size: 2.2em; }
+            .header-search {
+                position: static;
+                margin-top: 10px;
+                justify-content: center;
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            nav {
+                padding: 8px;
+                gap: 8px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            nav a {
+                padding: 8px 12px;
+                font-size: 0.95em;
+            }
+            .container {
+                padding: 15px;
+                margin: 10px auto;
+            }
+            h2 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+            .relevance-dot,
+            .stimulus-dot {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8em;
+            }
+            .detail-badges,
+            .detail-badges--bottom {
+                gap: 6px;
+                margin-left: 0;
+                justify-content: center;
+            }
+            .article-title-link { font-size: 1.15em; }
+            .article-summary {
+                font-size: 0.9em;
+                padding-left: calc(28px + 6px + 28px + 10px);
+            }
+            .summary-list-item h3 {
+                font-size: 1.4em;
+                margin-bottom: 10px;
+            }
+            .summary-list-item pre {
+                font-size: 1em;
+                padding: 0;
+            }
+            .article-detail-title { font-size: 2em; }
+            .article-detail-meta {
+                flex-direction: column;
+                gap: 5px 0;
+                font-size: 0.9em;
+            }
+            .article-detail-meta span:not(:last-child)::after {
+                content: none;
+            }
+            .article-detail-summary-block,
+            .article-detail-content {
+                font-size: 1em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <h1 class="site-logo">YOUTH <span>NEWS</span></h1>
+        <form method="get" action="/" class="header-search">
+            <input type="text" name="query" placeholder="검색어" value="{{ request.args.get('query','') }}">
+            <select name="field">
+                <option value="title"    {% if request.args.get('field')=='title'    %}selected{% endif %}>제목</option>
+                <option value="journalist"{% if request.args.get('field')=='journalist'%}selected{% endif %}>기자</option>
+                <option value="summary"  {% if request.args.get('field')=='summary'  %}selected{% endif %}>내용</option>
+                <option value="press"    {% if request.args.get('field')=='press'    %}selected{% endif %}>언론사</option>
+            </select>
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            <button type="submit">검색</button>
+        </form>
+    </header>
+
+    <nav>
+        {% for sub in subcategories %}
+            <a href="/?category={{ sub }}" class="{{ 'active' if selected_category==sub else '' }}">{{ sub }}</a>
+        {% endfor %}
+        <a href="/summary" class="{{ 'active' if selected_category=='어제 요약' else '' }}">어제 요약</a>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

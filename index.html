@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ selected_category }}</h2>
+
+<!-- 기사 목록 -->
+{% if selected_articles %}
+<ul>
+    {% for idx, article in selected_articles %}
+    <li class="article-list-item">
+        <div class="article-item">
+            <a href="/article/{{ article['id'] }}" class="article-title-link">
+                {{ article['title'] }}
+            </a>
+            <div class="relevance-dot"
+                 style="--relevance-hue: {{ article.relevance_hue }};"
+                 title="연관성 {{ article['relevance_score'] }}">
+                {{ article['relevance_score'] }}
+            </div>
+            <div class="stimulus-dot"
+                 style="--stimulus-hue: {{ article.stimulus_hue }};"
+                 title="자극성 {{ article['headline_score'] }}">
+                {{ article['headline_score'] }}
+            </div>
+        </div>
+        <small class="article-summary">{{ article['summary'] }}</small>
+    </li>
+    {% if not loop.last %}
+    <hr class="article-divider">
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<!-- 페이지네이션 -->
+{% if total_pages > 1 %}
+<div class="pagination">
+    {# 한 블록에 보여줄 페이지 수를 10으로 변경 #}
+    {% set block_size = 10 %}
+    {% set block_start = (current_page - 1) // block_size * block_size + 1 %}
+    {% set block_end = block_start + block_size - 1 %}
+    {% if block_end > total_pages %}
+        {% set block_end = total_pages %}
+    {% endif %}
+
+    {# 이전 블록 / 처음으로 #}
+    {% if current_page > 1 %}
+        <a href="/?category={{ selected_category }}&page=1&query={{ query }}&field={{ field }}">««</a>
+        <a href="/?category={{ selected_category }}&page={{ current_page - 1 }}&query={{ query }}&field={{ field }}">«</a>
+    {% else %}
+        <span class="disabled">««</span>
+        <span class="disabled">«</span>
+    {% endif %}
+
+    {# 페이지 번호 #}
+    {% for p in range(block_start, block_end + 1) %}
+        {% if p == current_page %}
+            <span class="current-page">{{ p }}</span>
+        {% else %}
+            <a href="/?category={{ selected_category }}&page={{ p }}&query={{ query }}&field={{ field }}">{{ p }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {# 다음 블록 / 마지막으로 #}
+    {% if current_page < total_pages %}
+        <a href="/?category={{ selected_category }}&page={{ current_page + 1 }}&query={{ query }}&field={{ field }}">»</a>
+        <a href="/?category={{ selected_category }}&page={{ total_pages }}&query={{ query }}&field={{ field }}">»»</a>
+    {% else %}
+        <span class="disabled">»</span>
+        <span class="disabled">»»</span>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<p>해당 카테고리의 기사가 없습니다.</p>
+{% endif %}
+{% endblock %}
+

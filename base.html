@@ -303,31 +303,43 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
             margin-top: 30px;
-            font-size: 1em;
+            flex-wrap: wrap;
         }
+
         .pagination a,
-        .pagination span {
+        .pagination strong {
             display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: #fff;
             color: #333;
             font-weight: bold;
-            border: 1px solid transparent;
+            text-decoration: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            min-width: 36px;
+            text-align: center;
         }
+
         .pagination a:hover {
             background-color: #ff9800;
-            color: white;
+            color: #fff;
+            border-color: #ff9800;
         }
-        .pagination .current-page {
-            color: red;
-            text-decoration: underline;
+
+        .pagination strong {
+            background-color: #333;
+            color: #fff;
+            border-color: #333;
         }
-        .pagination .disabled {
-            color: #ccc;
-            cursor: default;
+
+        .pagination a:first-child,
+        .pagination a:last-child {
+            font-weight: bold;
+            background-color: #f3f3f3;
+            border-color: #ccc;
         }
 
         /* 반응형 */

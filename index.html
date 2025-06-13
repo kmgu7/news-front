@@ -34,39 +34,36 @@
 <!-- 페이지네이션 -->
 {% if total_pages > 1 %}
 <div class="pagination">
-    {# 한 블록에 보여줄 페이지 수를 10으로 변경 #}
-    {% set block_size = 10 %}
-    {% set block_start = (current_page - 1) // block_size * block_size + 1 %}
-    {% set block_end = block_start + block_size - 1 %}
-    {% if block_end > total_pages %}
-        {% set block_end = total_pages %}
-    {% endif %}
+    {% set start_page = ((current_page - 1) // 10) * 10 + 1 %}
+    {% set end_page = [start_page + 9, total_pages]|min %}
 
-    {# 이전 블록 / 처음으로 #}
+    {# 처음으로 버튼 #}
     {% if current_page > 1 %}
-        <a href="/?category={{ selected_category }}&page=1&query={{ query }}&field={{ field }}">««</a>
-        <a href="/?category={{ selected_category }}&page={{ current_page - 1 }}&query={{ query }}&field={{ field }}">«</a>
-    {% else %}
-        <span class="disabled">««</span>
-        <span class="disabled">«</span>
+    <a href="/?category={{ selected_category }}&page=1">처음</a>
     {% endif %}
 
-    {# 페이지 번호 #}
-    {% for p in range(block_start, block_end + 1) %}
+    {# 이전 블록 #}
+    {% if start_page > 1 %}
+    <a href="/?category={{ selected_category }}&page={{ start_page - 1 }}">«</a>
+    {% endif %}
+
+    {# 숫자 페이지 목록 #}
+    {% for p in range(start_page, end_page + 1) %}
         {% if p == current_page %}
-            <span class="current-page">{{ p }}</span>
+        <strong>[{{ p }}]</strong>
         {% else %}
-            <a href="/?category={{ selected_category }}&page={{ p }}&query={{ query }}&field={{ field }}">{{ p }}</a>
+        <a href="/?category={{ selected_category }}&page={{ p }}">[{{ p }}]</a>
         {% endif %}
     {% endfor %}
 
-    {# 다음 블록 / 마지막으로 #}
+    {# 다음 블록 #}
+    {% if end_page < total_pages %}
+    <a href="/?category={{ selected_category }}&page={{ end_page + 1 }}">»</a>
+    {% endif %}
+
+    {# 끝으로 버튼 #}
     {% if current_page < total_pages %}
-        <a href="/?category={{ selected_category }}&page={{ current_page + 1 }}&query={{ query }}&field={{ field }}">»</a>
-        <a href="/?category={{ selected_category }}&page={{ total_pages }}&query={{ query }}&field={{ field }}">»»</a>
-    {% else %}
-        <span class="disabled">»</span>
-        <span class="disabled">»»</span>
+    <a href="/?category={{ selected_category }}&page={{ total_pages }}">끝</a>
     {% endif %}
 </div>
 {% endif %}
